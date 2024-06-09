@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - Get-Previous-Run-Info
-    if: fromJson(needs.Get-Previous-Run-Info.outputs.updated) == true
+    if: fromJson(needs.Get-Previous-Run-Info.outputs.updated)
     steps:
       - id: your-step
         run: echo "this commit is not same with the previous succeeded workflow run."
