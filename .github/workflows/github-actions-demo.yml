@@ -34,6 +34,7 @@ jobs:
       - id: your-step
         run: | 
           echo "this commit is not same with the previous succeeded workflow run."
+          echo "${{ fromJson(needs.Get-Previous-Run-Info.outputs.updated) }}"
 
   Job-With-Same-Commit:
     runs-on: ubuntu-latest
@@ -42,5 +43,8 @@ jobs:
     if: ${{ fromJson(needs.Get-Previous-Run-Info.outputs.updated) }} == false
     steps:
       - id: your-step
-        run: echo "this commit is same with the previous succeeded workflow run."
+        run: |
+          echo "this commit is same with the previous succeeded workflow run."
+          echo "${{ fromJson(needs.Get-Previous-Run-Info.outputs.updated) }}"
+
       
