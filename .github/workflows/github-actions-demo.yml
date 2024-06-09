@@ -4,24 +4,34 @@ on: [push]
 env:
   GH_TOKEN: ${{ github.token }}
 jobs:
-  Explore-GitHub-Actions:
+  Get-Previous-Run-Info:
     runs-on: ubuntu-latest
+    outputs:
+        json: ${{ steps.get-json.outputs.result }}
+        updated: fromJson(${{ steps.get-json.outputs.updated }})
     steps:
       - name: 'check commit sha with the prev succeeded workflow run'
+        id: 'get-json'
         run: |
           result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"  "/repos/${{ github.repository }}/actions/runs?status=success&branch=main&per_page=1")
-          last_workflow=`echo ${result} | jq -c '.workflow_runs[] | {id: .id, branch:.head_branch, sha:.head_sha, run_number:.run_number, updated_at:.updated_at}'`
-          echo "LAST_WORKFLOW=${last_workflow}" >> $GITHUB_OUTPUT
-
-        
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          echo "result=${result}" >> $GITHUB_OUTPUT
+          head_sha=`echo ${result} | jq '.workflow_runs[0].head_sha'`
+          updated=`${head_sha} = ${{ github.sha}}`
+          echo "updated=${updated}" >> $GITHUB_OUTPUT
+  Job-With-New-Commit:
+    runs-on: ubuntu-latest
+    needs:
+      - Get-Previous-Run-Info
+    if: fromJson(needs.Get-Previous-Run-Info.outputs.json)
+    steps:
+      - id: your-step
+        run: echo "this commit is not same with the previous succeeded workflow run.""
+  Job-With-Same-Commit:
+    runs-on: ubuntu-latest
+    needs:
+      - Get-Previous-Run-Info
+    if: fromJson(needs.Get-Previous-Run-Info.outputs.json)
+    steps:
+      - id: your-step
+        run: echo "this commit is same with the previous succeeded workflow run.""
+      
