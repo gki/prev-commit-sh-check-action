@@ -2,8 +2,8 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
   push:
-  schedule:
-    - cron:  '*/5 * * * *'
+  # schedule:
+  #   - cron:  '*/5 * * * *'
 env:
   GH_TOKEN: ${{ github.token }}
 jobs:
