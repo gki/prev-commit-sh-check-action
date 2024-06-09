@@ -17,7 +17,7 @@ jobs:
           echo "result=${result}"
           echo "result=${result}" >> $GITHUB_OUTPUT
           head_sha=`echo ${result} | jq '.workflow_runs[0].head_sha'`
-          updated=$(if [ ${head_sha} = ${{ github.sha}} ]; then echo 'true'; else echo "false"; fi;)
+          updated=$(if [ ${head_sha} = ${{ github.sha}} ]; then echo 'false'; else echo "true"; fi;)
           echo "updated=${updated}"
           echo "updated=${updated}" >> $GITHUB_OUTPUT
   Job-With-New-Commit:
