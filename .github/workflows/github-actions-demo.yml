@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
   push:
   schedule:
-    - cron:  '0 * * * *'
+    - cron:  '*/5 * * * *'
 env:
   GH_TOKEN: ${{ github.token }}
 jobs:
